@@ -2,6 +2,8 @@ from pathlib import Path
 import shutil
 import os
 import logging
+import json
+
 from tqdm import tqdm as _tqdm
 
 
@@ -20,7 +22,7 @@ def folder(raw_path, exists=False, reset=False, touch=False):
                 shutil.rmtree(path)
             os.makedirs(path)
         except OSError:
-            logging.warn(f'Cannot remove {raw_path}')
+            logging.warning(f'Cannot remove {raw_path}')
 
     if touch:
         os.makedirs(path, exist_ok=True)
@@ -95,3 +97,89 @@ def write_text_lines(
                 continue
             fout.write(line)
             fout.write('\n')
+
+
+def read_json_lines(
+    path,
+    buffering=-1,
+    encoding=None,
+    errors=None,
+    newline=None,
+    skip_empty=True,
+    ignore_error=False,
+    silent=False,
+    tqdm=False,
+):
+    for line_num, line in enumerate(
+        read_text_lines(
+            path,
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
+            strip=True,
+            skip_empty=skip_empty,
+            tqdm=tqdm,
+        )
+    ):
+        try:
+            struct = json.loads(line)
+            if skip_empty and not struct:
+                continue
+            yield struct
+
+        except json.JSONDecodeError:
+            if not silent:
+                logging.warning(f'Cannot parse L{line_num}: "{line}"')
+            if not ignore_error:
+                raise
+
+
+def _encode_json_lines(structs, skip_empty, ensure_ascii, silent, ignore_error):
+    for line_num, struct in enumerate(structs):
+        try:
+            if skip_empty and not struct:
+                continue
+            line = json.dumps(struct, ensure_ascii=ensure_ascii)
+            yield line
+
+        except (TypeError, OverflowError, ValueError):
+            if not silent:
+                logging.warning(f'Cannot encode L{line_num}: "{struct}"')
+            if not ignore_error:
+                raise
+
+
+def write_json_lines(
+    path,
+    structs,
+    buffering=-1,
+    encoding=None,
+    errors=None,
+    newline=None,
+    skip_empty=True,
+    ensure_ascii=True,
+    ignore_error=False,
+    silent=False,
+    tqdm=False,
+):
+    write_text_lines(
+        path,
+        _encode_json_lines(
+            structs,
+            skip_empty=skip_empty,
+            ensure_ascii=ensure_ascii,
+            silent=silent,
+            ignore_error=ignore_error,
+        ),
+        buffering=buffering,
+        encoding=encoding,
+        errors=errors,
+        newline=newline,
+        tqdm=tqdm,
+    )
+
+
+# TODO: csv
+# TODO: json
+# TODO: toml

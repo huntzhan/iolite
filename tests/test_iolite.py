@@ -69,6 +69,33 @@ def test_write_text_lines(tmpdir, capsys):
     write_text_lines(file(some_file), [' foo', '', 'bar '], strip=False)
     assert some_file.read() == ' foo\nbar \n'
 
+    some_file = tmpdir.join('file4')
+    write_text_lines(file(some_file), [' foo', '', 'bar '], newline='\r')
+    assert some_file.read_binary() == b'foo\rbar\r'
+
     assert not capsys.readouterr().out
     write_text_lines(file(some_file), [' foo', '', 'bar '], tqdm=True)
     assert '[00:00' in capsys.readouterr().err
+
+
+def test_json_lines(tmpdir):
+    some_file = tmpdir.join('file')
+    structs = [{'foo': 'bar'}, {'baz': '中文'}]
+    write_json_lines(file(some_file), structs)
+    assert list(read_json_lines(file(some_file))) == structs
+
+    some_file = tmpdir.join('file2')
+    write_json_lines(file(some_file), structs, ensure_ascii=False)
+    assert list(read_json_lines(file(some_file))) == structs
+
+    class Foo:
+        pass
+
+    some_file = tmpdir.join('file3')
+    with pytest.raises(TypeError):
+        write_json_lines(file(some_file), [Foo()])
+
+    some_file = tmpdir.join('file4')
+    write_text_lines(file(some_file), ['foobar'])
+    with pytest.raises(json.JSONDecodeError):
+        list(read_json_lines(file(some_file)))

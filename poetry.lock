@@ -232,17 +232,6 @@ version = "0.4.3"
 dev = ["testpath"]
 
 [[package]]
-category = "main"
-description = "Library with helpers for the jsonlines file format"
-name = "jsonlines"
-optional = false
-python-versions = "*"
-version = "1.2.0"
-
-[package.dependencies]
-six = "*"
-
-[[package]]
 category = "dev"
 description = "Store and access your passwords safely."
 name = "keyring"
@@ -524,7 +513,7 @@ cryptography = "*"
 jeepney = ">=0.4.2"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -631,7 +620,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "d1a2e43b474b2633cdf4126accbe05226b02a9a75b78064e3db34f7d33c56b5e"
+content-hash = "6e5c4cef0bc16231e356d9cc823043339033bc4efb6f81c93cd14d549b1a257b"
 python-versions = ">= 3.6"
 
 [metadata.files]
@@ -753,10 +742,6 @@ jedi = [
 jeepney = [
     {file = "jeepney-0.4.3-py3-none-any.whl", hash = "sha256:d6c6b49683446d2407d2fe3acb7a368a77ff063f9182fe427da15d622adc24cf"},
     {file = "jeepney-0.4.3.tar.gz", hash = "sha256:3479b861cc2b6407de5188695fa1a8d57e5072d7059322469b62628869b8e36e"},
-]
-jsonlines = [
-    {file = "jsonlines-1.2.0-py2.py3-none-any.whl", hash = "sha256:0ebd5b0c3efe0d4b5018b320fb0ee1a7b680ab39f6eb853715859f818d386cc8"},
-    {file = "jsonlines-1.2.0.tar.gz", hash = "sha256:43b8d5588a9d4862c8a4a49580e38e20ec595aee7ad6fe469b10fb83fbefde88"},
 ]
 keyring = [
     {file = "keyring-21.2.1-py3-none-any.whl", hash = "sha256:3401234209015144a5d75701e71cb47239e552b0882313e9f51e8976f9e27843"},
