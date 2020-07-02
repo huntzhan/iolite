@@ -11,17 +11,16 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">= 3.6"
+tqdm = "^4.47.0"
+jsonlines = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 yapf = "^0.30.0"
 flake8 = "^3.8.2"
 twine = "^3.1.1"
-
-# CLI.
-# [tool.poetry.scripts]
-# iolite = "iolite:main"
+ipython = "^7.16.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
