@@ -43,13 +43,13 @@ def test_read_text_lines(tmpdir, capsys):
   line 2
 line 3 ''')
     lines = read_text_lines(file(some_file))
-    assert list(lines) == ['line 1', 'line 2', 'line 3']
+    assert len(list(lines)) == 4
 
     lines = read_text_lines(file(some_file), strip=False)
     assert list(lines) == ['line 1\n', '\n', '  line 2\n', 'line 3 ']
 
-    lines = read_text_lines(file(some_file), skip_empty=False)
-    assert len(list(lines)) == 4
+    lines = read_text_lines(file(some_file), skip_empty=True)
+    assert list(lines) == ['line 1', 'line 2', 'line 3']
 
     assert not capsys.readouterr().out
     list(read_text_lines(file(some_file), tqdm=True))
@@ -59,22 +59,22 @@ line 3 ''')
 def test_write_text_lines(tmpdir, capsys):
     some_file = tmpdir.join('file')
     write_text_lines(file(some_file), [' foo', '', 'bar '])
-    assert some_file.read() == 'foo\nbar\n'
-
-    some_file = tmpdir.join('file2')
-    write_text_lines(file(some_file), [' foo', '', 'bar '], skip_empty=False)
     assert some_file.read() == 'foo\n\nbar\n'
 
+    some_file = tmpdir.join('file2')
+    write_text_lines(file(some_file), [' foo', '', 'bar '], skip_empty=True)
+    assert some_file.read() == 'foo\nbar\n'
+
     some_file = tmpdir.join('file3')
-    write_text_lines(file(some_file), [' foo', '', 'bar '], strip=False)
+    write_text_lines(file(some_file), [' foo', 'bar '], strip=False)
     assert some_file.read() == ' foo\nbar \n'
 
     some_file = tmpdir.join('file4')
-    write_text_lines(file(some_file), [' foo', '', 'bar '], newline='\r')
+    write_text_lines(file(some_file), [' foo', 'bar '], newline='\r')
     assert some_file.read_binary() == b'foo\rbar\r'
 
     assert not capsys.readouterr().out
-    write_text_lines(file(some_file), [' foo', '', 'bar '], tqdm=True)
+    write_text_lines(file(some_file), [' foo', 'bar '], tqdm=True)
     assert '[00:00' in capsys.readouterr().err
 
 
@@ -99,3 +99,16 @@ def test_json_lines(tmpdir):
     write_text_lines(file(some_file), ['foobar'])
     with pytest.raises(json.JSONDecodeError):
         list(read_json_lines(file(some_file)))
+
+
+def test_csv_lines(tmpdir):
+    some_file = tmpdir.join('file')
+    structs = [['a', 'b', 'c'], ['d', 'e', 'f']]
+    write_csv_lines(file(some_file), structs)
+    assert list(read_csv_lines(file(some_file))) == structs
+    assert list(read_csv_lines(file(some_file), skip_header=True)) == structs[1:]
+
+    some_file = tmpdir.join('file2')
+    structs = [{'a': 1, 'b': 2}, {'b': 4, 'a': 3}]
+    write_csv_lines(file(some_file), structs, from_dict=True)
+    assert list(read_csv_lines(file(some_file))) == [['a', 'b'], ['1', '2'], ['3', '4']]
