@@ -359,5 +359,58 @@ def write_csv_lines(
                 csv_writer.writerow(struct)
 
 
-# TODO: json
+def read_json(
+    path,
+    buffering=-1,
+    encoding=None,
+    errors=None,
+    newline=None,
+    ignore_error=False,
+    silent=False,
+):
+    with path.open(
+        mode='r',
+        buffering=buffering,
+        encoding=encoding,
+        errors=errors,
+        newline=newline,
+    ) as fin:
+        try:
+            return json.load(fin)
+        except json.JSONDecodeError:
+            if not ignore_error:
+                raise
+            if not silent:
+                logging.warning(f'Cannot load {path}')
+            return {}
+
+
+def write_json(
+    path,
+    struct,
+    buffering=-1,
+    encoding=None,
+    errors=None,
+    newline=None,
+    ensure_ascii=True,
+    indent=None,
+    ignore_error=False,
+    silent=False,
+):
+    with path.open(
+        mode='w',
+        buffering=buffering,
+        encoding=encoding,
+        errors=errors,
+        newline=newline,
+    ) as fout:
+        try:
+            json.dump(struct, fout, ensure_ascii=ensure_ascii, indent=indent)
+        except (TypeError, OverflowError, ValueError):
+            if not ignore_error:
+                raise
+            if not silent:
+                logging.warning(f'Cannot encode "{struct}"')
+
+
 # TODO: toml

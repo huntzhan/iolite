@@ -112,3 +112,10 @@ def test_csv_lines(tmpdir):
     structs = [{'a': 1, 'b': 2}, {'b': 4, 'a': 3}]
     write_csv_lines(file(some_file), structs, from_dict=True)
     assert list(read_csv_lines(file(some_file))) == [['a', 'b'], ['1', '2'], ['3', '4']]
+
+
+def test_json(tmpdir):
+    some_file = tmpdir.join('file')
+    struct = {'a': 1, 'b': 2}
+    write_json(file(some_file), struct)
+    assert read_json(file(some_file)) == struct
