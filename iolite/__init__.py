@@ -19,12 +19,18 @@ def folder(raw_path, exists=False, reset=False, touch=False):
             raise NotADirectoryError(f'{raw_path} should be a folder.')
 
     if reset:
-        try:
-            if path.exists():
-                shutil.rmtree(path)
-            os.makedirs(path)
-        except OSError:
-            logging.warning(f'Cannot remove {raw_path}')
+        if path.exists():
+            # Remove children instead.
+            for child in path.iterdir():
+                if child.is_dir():
+                    try:
+                        shutil.rmtree(child)
+                    except OSError:
+                        logging.warning(f'Cannot remove folder {child}.')
+                else:
+                    child.unlink()
+        else:
+            os.makedirs(path, exist_ok=True)
 
     if touch:
         os.makedirs(path, exist_ok=True)
@@ -281,6 +287,8 @@ def write_csv_lines(
     ) as fout:
         if tqdm:
             fout = _tqdm(fout)
+
+        # TODO: structs should be iterable instead.
 
         csv_writer = csv.writer(fout, dialect, **fmtparams)
 
