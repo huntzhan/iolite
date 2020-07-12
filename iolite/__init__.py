@@ -5,6 +5,7 @@ import logging
 import json
 import csv
 from collections import abc
+from itertools import chain
 
 from tqdm import tqdm as _tqdm
 
@@ -288,32 +289,44 @@ def write_csv_lines(
         if tqdm:
             fout = _tqdm(fout)
 
-        # TODO: structs should be iterable instead.
+        try:
+            iter_structs = iter(structs)
+        except TypeError:
+            if not ignore_error:
+                raise
+            elif not silent:
+                logging.warning('structs is not iterable.')
+            return
 
         csv_writer = csv.writer(fout, dialect, **fmtparams)
 
         from_dict_keys = None
         if from_dict:
-            if not structs:
-                msg = 'empty list.'
+            try:
+                first_struct = next(iter_structs)
+            except StopIteration:
+                msg = 'empty structs.'
                 if not ignore_error:
                     raise ValueError(msg)
                 elif not silent:
                     logging.warning(msg)
                 return
 
-            if not isinstance(structs[0], abc.Mapping):
-                msg = f'structs[0]={structs[0]} should be a mapping.'
+            if not isinstance(first_struct, abc.Mapping):
+                msg = f'structs[0]={first_struct} should be a mapping.'
                 if not ignore_error:
                     raise TypeError(msg)
                 elif not silent:
                     logging.warning(msg)
                 return
 
-            from_dict_keys = list(structs[0])
+            from_dict_keys = list(first_struct)
             csv_writer.writerow(from_dict_keys)
 
-        for num, struct in enumerate(structs):
+            # "Put back" the first struct.
+            iter_structs = chain((first_struct,), iter_structs)
+
+        for num, struct in enumerate(iter_structs):
             if from_dict:
                 if not isinstance(struct, abc.Mapping):
                     msg = f'#{num} {struct} should be a mapping.'
@@ -422,3 +435,4 @@ def write_json(
 
 
 # TODO: toml
+# TODO: pickle(joblib)
