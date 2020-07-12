@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iolite"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Hunt Zhan <huntzhan.dev@gmail.com>"]
 license = "Not open source"
 description = ""
