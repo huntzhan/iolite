@@ -8,6 +8,8 @@ from collections import abc
 from itertools import chain
 
 from tqdm import tqdm as _tqdm
+import toml
+import joblib
 
 
 def folder(raw_path, exists=False, reset=False, touch=False):
@@ -434,5 +436,43 @@ def write_json(
                 logging.warning(f'Cannot encode "{struct}"')
 
 
-# TODO: toml
-# TODO: pickle(joblib)
+def read_toml(path):
+    return toml.load(path)
+
+
+def write_toml(
+    path,
+    struct,
+    buffering=-1,
+    encoding=None,
+    errors=None,
+    newline=None,
+):
+    with path.open(
+        mode='w',
+        buffering=buffering,
+        encoding=encoding,
+        errors=errors,
+        newline=newline,
+    ) as fout:
+        toml.dump(struct, fout)
+
+
+def read_joblib(path, mmap_mode=None):
+    return joblib.load(path, mmap_mode=mmap_mode)
+
+
+def write_joblib(
+    path,
+    struct,
+    compress=0,
+    protocol=None,
+    cache_size=None,
+):
+    joblib.dump(
+        struct,
+        path,
+        compress=compress,
+        protocol=protocol,
+        cache_size=cache_size,
+    )

@@ -119,3 +119,17 @@ def test_json(tmpdir):
     struct = {'a': 1, 'b': 2}
     write_json(file(some_file), struct)
     assert read_json(file(some_file)) == struct
+
+
+def test_toml(tmpdir):
+    some_file = tmpdir.join('file')
+    struct = {'a': 1, 'b': 2}
+    write_toml(file(some_file), struct)
+    assert read_toml(file(some_file)) == struct
+
+
+def test_joblib(tmpdir):
+    some_file = tmpdir.join('file')
+    struct = {'a': 1, 'b': 2}
+    write_joblib(file(some_file), struct)
+    assert read_joblib(file(some_file)) == struct

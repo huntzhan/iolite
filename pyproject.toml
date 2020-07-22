@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iolite"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Hunt Zhan <huntzhan.dev@gmail.com>"]
 license = "Not open source"
 description = ""
@@ -13,6 +13,8 @@ packages = [
 [tool.poetry.dependencies]
 python = ">= 3.6"
 tqdm = "^4.47.0"
+toml = "^0.10.1"
+joblib = "^0.16.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
