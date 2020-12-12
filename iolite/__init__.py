@@ -59,10 +59,12 @@ def read_text_lines(
     encoding=None,
     errors=None,
     newline=None,
-    strip=True,
+    strip=False,
     skip_empty=False,
     tqdm=False,
 ):
+    path = file(path, exists=True)
+
     with path.open(
         mode='r',
         buffering=buffering,
@@ -87,10 +89,12 @@ def write_text_lines(
     encoding=None,
     errors=None,
     newline=None,
-    strip=True,
+    strip=False,
     skip_empty=False,
     tqdm=False,
 ):
+    path = file(path)
+
     with path.open(
         mode='w',
         buffering=buffering,
@@ -206,6 +210,8 @@ def read_csv_lines(
     dialect='excel',
     **fmtparams,
 ):
+    path = file(path, exists=True)
+
     if not header_exists and match_header:
         msg = 'Cannot match header if header does not exists.'
         if not ignore_error:
@@ -281,6 +287,8 @@ def write_csv_lines(
     dialect='excel',
     **fmtparams,
 ):
+    path = file(path)
+
     with path.open(
         mode='w',
         buffering=buffering,
@@ -391,6 +399,8 @@ def read_json(
     ignore_error=False,
     silent=False,
 ):
+    path = file(path, exists=True)
+
     with path.open(
         mode='r',
         buffering=buffering,
@@ -420,6 +430,8 @@ def write_json(
     ignore_error=False,
     silent=False,
 ):
+    path = file(path)
+
     with path.open(
         mode='w',
         buffering=buffering,
@@ -437,6 +449,7 @@ def write_json(
 
 
 def read_toml(path):
+    path = file(path, exists=True)
     return toml.load(path)
 
 
@@ -448,6 +461,8 @@ def write_toml(
     errors=None,
     newline=None,
 ):
+    path = file(path)
+
     with path.open(
         mode='w',
         buffering=buffering,
@@ -459,6 +474,7 @@ def write_toml(
 
 
 def read_joblib(path, mmap_mode=None):
+    path = file(path, exists=True)
     return joblib.load(path, mmap_mode=mmap_mode)
 
 
@@ -469,6 +485,8 @@ def write_joblib(
     protocol=None,
     cache_size=None,
 ):
+    path = file(path)
+
     joblib.dump(
         struct,
         path,
