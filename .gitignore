@@ -101,6 +101,9 @@ ENV/
 # mypy
 .mypy_cache/
 
+# direnv
+.envrc.private
+
 .vscode/
 data/
 .*DS_Store
