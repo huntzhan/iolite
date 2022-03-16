@@ -1,6 +1,7 @@
 from pathlib import Path
 import shutil
 import os
+import os.path
 import logging
 import json
 import csv
@@ -12,7 +13,10 @@ import toml
 import joblib
 
 
-def folder(raw_path, exists=False, reset=False, touch=False):
+def folder(raw_path, expandvars=False, exists=False, reset=False, touch=False):
+    if expandvars:
+        raw_path = os.path.expandvars(raw_path)
+
     path = Path(raw_path)
 
     if exists:
@@ -41,7 +45,10 @@ def folder(raw_path, exists=False, reset=False, touch=False):
     return path
 
 
-def file(raw_path, exists=False):
+def file(raw_path, expandvars=False, exists=False):
+    if expandvars:
+        raw_path = os.path.expandvars(raw_path)
+
     path = Path(raw_path)
 
     if exists:
