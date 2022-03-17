@@ -62,6 +62,7 @@ def file(raw_path, expandvars=False, exists=False):
 
 def read_text_lines(
     path,
+    expandvars=False,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -70,7 +71,7 @@ def read_text_lines(
     skip_empty=False,
     tqdm=False,
 ):
-    path = file(path, exists=True)
+    path = file(path, expandvars=expandvars, exists=True)
 
     with path.open(
         mode='r',
@@ -93,6 +94,7 @@ def write_text_lines(
     path,
     texts,
     buffering=-1,
+    expandvars=False,
     encoding=None,
     errors=None,
     newline=None,
@@ -100,7 +102,7 @@ def write_text_lines(
     skip_empty=False,
     tqdm=False,
 ):
-    path = file(path)
+    path = file(path, expandvars=expandvars)
 
     with path.open(
         mode='w',
@@ -123,6 +125,7 @@ def write_text_lines(
 
 def read_json_lines(
     path,
+    expandvars=False,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -135,6 +138,7 @@ def read_json_lines(
     for num, text in enumerate(
         read_text_lines(
             path,
+            expandvars=expandvars,
             buffering=buffering,
             encoding=encoding,
             errors=errors,
@@ -174,6 +178,7 @@ def _encode_json_lines(structs, skip_empty, ensure_ascii, silent, ignore_error):
 def write_json_lines(
     path,
     structs,
+    expandvars=False,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -193,6 +198,7 @@ def write_json_lines(
             silent=silent,
             ignore_error=ignore_error,
         ),
+        expandvars=expandvars,
         buffering=buffering,
         encoding=encoding,
         errors=errors,
@@ -203,6 +209,7 @@ def write_json_lines(
 
 def read_csv_lines(
     path,
+    expandvars=False,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -217,7 +224,7 @@ def read_csv_lines(
     dialect='excel',
     **fmtparams,
 ):
-    path = file(path, exists=True)
+    path = file(path, expandvars=expandvars, exists=True)
 
     if not header_exists and match_header:
         msg = 'Cannot match header if header does not exists.'
@@ -281,6 +288,7 @@ def read_csv_lines(
 def write_csv_lines(
     path,
     structs,
+    expandvars=False,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -294,7 +302,7 @@ def write_csv_lines(
     dialect='excel',
     **fmtparams,
 ):
-    path = file(path)
+    path = file(path, expandvars=expandvars)
 
     with path.open(
         mode='w',
@@ -399,6 +407,7 @@ def write_csv_lines(
 
 def read_json(
     path,
+    expandvars=False,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -406,7 +415,7 @@ def read_json(
     ignore_error=False,
     silent=False,
 ):
-    path = file(path, exists=True)
+    path = file(path, expandvars=expandvars, exists=True)
 
     with path.open(
         mode='r',
@@ -428,6 +437,7 @@ def read_json(
 def write_json(
     path,
     struct,
+    expandvars=False,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -437,7 +447,7 @@ def write_json(
     ignore_error=False,
     silent=False,
 ):
-    path = file(path)
+    path = file(path, expandvars=expandvars)
 
     with path.open(
         mode='w',
@@ -455,20 +465,24 @@ def write_json(
                 logging.warning(f'Cannot encode "{struct}"')
 
 
-def read_toml(path):
-    path = file(path, exists=True)
+def read_toml(
+    path,
+    expandvars=False,
+):
+    path = file(path, expandvars=expandvars, exists=True)
     return toml.load(path)
 
 
 def write_toml(
     path,
     struct,
+    expandvars=False,
     buffering=-1,
     encoding=None,
     errors=None,
     newline=None,
 ):
-    path = file(path)
+    path = file(path, expandvars=expandvars)
 
     with path.open(
         mode='w',
@@ -480,19 +494,24 @@ def write_toml(
         toml.dump(struct, fout)
 
 
-def read_joblib(path, mmap_mode=None):
-    path = file(path, exists=True)
+def read_joblib(
+    path,
+    expandvars=False,
+    mmap_mode=None,
+):
+    path = file(path, expandvars=expandvars, exists=True)
     return joblib.load(path, mmap_mode=mmap_mode)
 
 
 def write_joblib(
     path,
     struct,
+    expandvars=False,
     compress=0,
     protocol=None,
     cache_size=None,
 ):
-    path = file(path)
+    path = file(path, expandvars=expandvars)
 
     joblib.dump(
         struct,
