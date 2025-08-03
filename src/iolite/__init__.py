@@ -13,7 +13,7 @@ import toml
 import joblib
 
 
-def folder(raw_path, expandvars=False, exists=False, reset=False, touch=False):
+def folder(raw_path, expandvars=True, exists=False, reset=False, touch=False):
     if expandvars:
         raw_path = os.path.expandvars(raw_path)
 
@@ -45,7 +45,7 @@ def folder(raw_path, expandvars=False, exists=False, reset=False, touch=False):
     return path
 
 
-def file(raw_path, expandvars=False, exists=False):
+def file(raw_path, expandvars=True, exists=False):
     if expandvars:
         raw_path = os.path.expandvars(raw_path)
 
@@ -62,7 +62,7 @@ def file(raw_path, expandvars=False, exists=False):
 
 def read_text_lines(
     path,
-    expandvars=False,
+    expandvars=True,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -74,11 +74,11 @@ def read_text_lines(
     path = file(path, expandvars=expandvars, exists=True)
 
     with path.open(
-        mode='r',
-        buffering=buffering,
-        encoding=encoding,
-        errors=errors,
-        newline=newline,
+            mode='r',
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
     ) as fin:
         if tqdm:
             fin = _tqdm(fin)
@@ -94,7 +94,7 @@ def write_text_lines(
     path,
     texts,
     buffering=-1,
-    expandvars=False,
+    expandvars=True,
     encoding=None,
     errors=None,
     newline=None,
@@ -105,11 +105,11 @@ def write_text_lines(
     path = file(path, expandvars=expandvars)
 
     with path.open(
-        mode='w',
-        buffering=buffering,
-        encoding=encoding,
-        errors=errors,
-        newline=newline,
+            mode='w',
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
     ) as fout:
         if tqdm:
             fout = _tqdm(fout)
@@ -125,7 +125,7 @@ def write_text_lines(
 
 def read_json_lines(
     path,
-    expandvars=False,
+    expandvars=True,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -136,17 +136,16 @@ def read_json_lines(
     tqdm=False,
 ):
     for num, text in enumerate(
-        read_text_lines(
-            path,
-            expandvars=expandvars,
-            buffering=buffering,
-            encoding=encoding,
-            errors=errors,
-            newline=newline,
-            strip=False,
-            tqdm=tqdm,
-        )
-    ):
+            read_text_lines(
+                path,
+                expandvars=expandvars,
+                buffering=buffering,
+                encoding=encoding,
+                errors=errors,
+                newline=newline,
+                strip=False,
+                tqdm=tqdm,
+            )):
         try:
             struct = json.loads(text)
             if skip_empty and not struct:
@@ -160,7 +159,8 @@ def read_json_lines(
                 logging.warning(f'Cannot parse #{num}: "{text}"')
 
 
-def _encode_json_lines(structs, skip_empty, ensure_ascii, silent, ignore_error):
+def _encode_json_lines(structs, skip_empty, ensure_ascii, silent,
+                       ignore_error):
     for num, struct in enumerate(structs):
         try:
             if skip_empty and not struct:
@@ -178,13 +178,13 @@ def _encode_json_lines(structs, skip_empty, ensure_ascii, silent, ignore_error):
 def write_json_lines(
     path,
     structs,
-    expandvars=False,
+    expandvars=True,
     buffering=-1,
     encoding=None,
     errors=None,
     newline=None,
     skip_empty=False,
-    ensure_ascii=True,
+    ensure_ascii=False,
     ignore_error=False,
     silent=False,
     tqdm=False,
@@ -209,15 +209,15 @@ def write_json_lines(
 
 def read_csv_lines(
     path,
-    expandvars=False,
+    expandvars=True,
     buffering=-1,
     encoding=None,
     errors=None,
     newline=None,
     header_exists=True,
-    skip_header=False,
+    skip_header=True,
     match_header=True,
-    to_dict=False,
+    to_dict=True,
     ignore_error=False,
     silent=False,
     tqdm=False,
@@ -243,11 +243,11 @@ def read_csv_lines(
         return
 
     with path.open(
-        mode='r',
-        buffering=buffering,
-        encoding=encoding,
-        errors=errors,
-        newline=newline,
+            mode='r',
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
     ) as fin:
         if tqdm:
             fin = _tqdm(fin)
@@ -288,7 +288,7 @@ def read_csv_lines(
 def write_csv_lines(
     path,
     structs,
-    expandvars=False,
+    expandvars=True,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -305,11 +305,11 @@ def write_csv_lines(
     path = file(path, expandvars=expandvars)
 
     with path.open(
-        mode='w',
-        buffering=buffering,
-        encoding=encoding,
-        errors=errors,
-        newline=newline,
+            mode='w',
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
     ) as fout:
         if tqdm:
             fout = _tqdm(fout)
@@ -349,7 +349,7 @@ def write_csv_lines(
             csv_writer.writerow(from_dict_keys)
 
             # "Put back" the first struct.
-            iter_structs = chain((first_struct,), iter_structs)
+            iter_structs = chain((first_struct, ), iter_structs)
 
         for num, struct in enumerate(iter_structs):
             if from_dict:
@@ -407,7 +407,7 @@ def write_csv_lines(
 
 def read_json(
     path,
-    expandvars=False,
+    expandvars=True,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -418,11 +418,11 @@ def read_json(
     path = file(path, expandvars=expandvars, exists=True)
 
     with path.open(
-        mode='r',
-        buffering=buffering,
-        encoding=encoding,
-        errors=errors,
-        newline=newline,
+            mode='r',
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
     ) as fin:
         try:
             return json.load(fin)
@@ -437,24 +437,24 @@ def read_json(
 def write_json(
     path,
     struct,
-    expandvars=False,
+    expandvars=True,
     buffering=-1,
     encoding=None,
     errors=None,
     newline=None,
-    ensure_ascii=True,
-    indent=None,
+    ensure_ascii=False,
+    indent=2,
     ignore_error=False,
     silent=False,
 ):
     path = file(path, expandvars=expandvars)
 
     with path.open(
-        mode='w',
-        buffering=buffering,
-        encoding=encoding,
-        errors=errors,
-        newline=newline,
+            mode='w',
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
     ) as fout:
         try:
             json.dump(struct, fout, ensure_ascii=ensure_ascii, indent=indent)
@@ -467,7 +467,7 @@ def write_json(
 
 def read_toml(
     path,
-    expandvars=False,
+    expandvars=True,
 ):
     path = file(path, expandvars=expandvars, exists=True)
     return toml.load(path)
@@ -476,7 +476,7 @@ def read_toml(
 def write_toml(
     path,
     struct,
-    expandvars=False,
+    expandvars=True,
     buffering=-1,
     encoding=None,
     errors=None,
@@ -485,18 +485,18 @@ def write_toml(
     path = file(path, expandvars=expandvars)
 
     with path.open(
-        mode='w',
-        buffering=buffering,
-        encoding=encoding,
-        errors=errors,
-        newline=newline,
+            mode='w',
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
     ) as fout:
         toml.dump(struct, fout)
 
 
 def read_joblib(
     path,
-    expandvars=False,
+    expandvars=True,
     mmap_mode=None,
 ):
     path = file(path, expandvars=expandvars, exists=True)
@@ -506,7 +506,7 @@ def read_joblib(
 def write_joblib(
     path,
     struct,
-    expandvars=False,
+    expandvars=True,
     compress=0,
     protocol=None,
     cache_size=None,
